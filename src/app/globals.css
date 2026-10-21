@@ -1,26 +1,336 @@
 @import "tailwindcss";
 
+@theme {
+  --color-ivory: #f4f0e8;
+  --color-paper: #faf8f3;
+  --color-bone: #e7e1d6;
+  --color-sand: #d9d1c3;
+  --color-ink: #161514;
+  --color-charcoal: #1c1a18;
+  --color-graphite: #5e5952;
+  --color-mist: #b5ada2;
+  --color-ember: #c4521f;
+  --color-ember-deep: #a8441a;
+  --color-ember-light: #e2804f;
+
+  --font-display: var(--font-bodoni), "Bodoni 72", "Didot", "Times New Roman", serif;
+  --font-sans: var(--font-inter-tight), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-plex-mono), ui-monospace, "SFMono-Regular", monospace;
+
+  --ease-arch: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --gutter: clamp(20px, 4vw, 64px);
+  --header-h: 76px;
+  color-scheme: light;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+html {
+  -webkit-text-size-adjust: 100%;
+  scroll-padding-top: var(--header-h);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+.lenis.lenis-stopped {
+  overflow: clip;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--color-ivory);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: clip;
+  text-rendering: optimizeLegibility;
+}
+
+::selection {
+  background: var(--color-ember);
+  color: var(--color-paper);
+}
+
+:focus-visible {
+  outline: 1.5px solid var(--color-ember);
+  outline-offset: 4px;
+}
+
+/* ── Layout primitives ─────────────────────────────────────────────────── */
+
+.shell {
+  width: 100%;
+  padding-inline: var(--gutter);
+  margin-inline: auto;
+  max-width: 1680px;
+}
+
+.grid-12 {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  column-gap: clamp(12px, 1.6vw, 28px);
+}
+
+.hairline {
+  height: 1px;
+  background: currentColor;
+  opacity: 0.16;
+}
+
+/* ── Type ──────────────────────────────────────────────────────────────── */
+
+.display {
+  font-family: var(--font-display);
+  font-weight: 400;
+  letter-spacing: -0.025em;
+  line-height: 0.92;
+  /* Cap the optical size: the display cut's hairlines vanish on screen at large sizes */
+  font-variation-settings: "opsz" 40;
+  font-variant-numeric: lining-nums;
+}
+
+.eyebrow {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.balance {
+  text-wrap: balance;
+}
+.pretty {
+  text-wrap: pretty;
+}
+
+/* Line mask used for headline reveals (lines are pre-split in markup) */
+.line-mask {
+  display: block;
+  overflow: hidden;
+  padding-bottom: 0.08em;
+  margin-bottom: -0.08em;
+}
+.line-mask > span {
+  display: block;
+}
+
+/* ── Links & buttons ───────────────────────────────────────────────────── */
+
+.link-underline {
+  background-image: linear-gradient(currentColor, currentColor);
+  background-size: 0% 1px;
+  background-repeat: no-repeat;
+  background-position: 100% 100%;
+  transition: background-size 0.6s var(--ease-arch);
+}
+.link-underline:hover,
+.link-underline:focus-visible {
+  background-size: 100% 1px;
+  background-position: 0% 100%;
+}
+
+.btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.9rem;
+  height: 3.25rem;
+  padding: 0 1.4rem;
+  font-size: 0.8125rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-weight: 500;
+  overflow: hidden;
+  isolation: isolate;
+  transition: color 0.5s var(--ease-arch), border-color 0.5s var(--ease-arch);
+}
+.btn::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  transform: scaleY(0);
+  transform-origin: 50% 100%;
+  transition: transform 0.55s var(--ease-arch);
+}
+.btn:hover::before,
+.btn:focus-visible::before {
+  transform: scaleY(1);
+}
+.btn .btn-arrow {
+  transition: transform 0.55s var(--ease-arch);
+}
+.btn:hover .btn-arrow {
+  transform: translateX(4px);
+}
+
+.btn-solid {
+  background: var(--color-ink);
+  color: var(--color-paper);
+}
+.btn-solid::before {
+  background: var(--color-ember-deep);
+}
+
+.btn-ghost {
+  border: 1px solid color-mix(in srgb, currentColor 35%, transparent);
+}
+.btn-ghost::before {
+  background: var(--color-ink);
+}
+.btn-ghost:hover,
+.btn-ghost:focus-visible {
+  color: var(--color-paper);
+  border-color: var(--color-ink);
+}
+.on-dark .btn-ghost::before {
+  background: var(--color-paper);
+}
+.on-dark .btn-ghost:hover,
+.on-dark .btn-ghost:focus-visible {
+  color: var(--color-ink);
+  border-color: var(--color-paper);
+}
+
+/* Brand square — taken from the orange square in the studio's mark */
+.brand-square {
+  display: inline-block;
+  width: 0.5em;
+  height: 0.5em;
+  background: var(--color-ember);
+}
+
+/* ── Motion: hide reveal targets only when JS motion is active ─────────── */
+
+html.motion [data-reveal] {
+  visibility: hidden;
+}
+
+/* ── Work cards & service rows (hover only where hover exists) ─────────── */
+
+.work-card [data-figure-inner] {
+  transition: transform 1.4s var(--ease-arch);
+}
+.work-card .work-rule {
+  transform: scaleX(0);
+  transform-origin: 0 50%;
+  transition: transform 0.8s var(--ease-arch);
+}
+.work-card:has(button:focus-visible) .work-rule {
+  transform: scaleX(1);
+}
+.service-row .service-title {
+  transition: transform 0.8s var(--ease-arch), color 0.5s var(--ease-arch);
+}
+.service-row .service-plate {
+  clip-path: inset(0 0 100% 0);
+  transition: clip-path 0.9s var(--ease-arch);
+}
+.service-row .service-square {
+  transform: scale(0);
+  transition: transform 0.5s var(--ease-arch);
+}
+
+@media (hover: hover) {
+  .work-card:hover [data-figure-inner] {
+    transform: scale(1.045);
+  }
+  .work-card:hover .work-rule {
+    transform: scaleX(1);
+  }
+  .service-row:hover .service-title {
+    transform: translateX(clamp(8px, 1.2vw, 20px));
+  }
+  .service-row:hover .service-plate {
+    clip-path: inset(0 0 0 0);
+  }
+  .service-row:hover .service-square {
+    transform: scale(1);
+  }
+}
+
+/* ── Dialog ────────────────────────────────────────────────────────────── */
+
+dialog.project-dialog {
+  max-width: none;
+  max-height: none;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: var(--color-ivory);
+  color: var(--color-ink);
+}
+dialog.project-dialog::backdrop {
+  background: rgba(22, 21, 20, 0.6);
+}
+
+/* ── Form ──────────────────────────────────────────────────────────────── */
+
+.field input,
+.field select,
+.field textarea {
+  width: 100%;
+  background: transparent;
+  border: 0;
+  border-bottom: 1px solid rgba(244, 240, 232, 0.28);
+  padding: 0.85rem 0;
+  color: var(--color-paper);
+  font-size: 1.0625rem;
+  border-radius: 0;
+  transition: border-color 0.4s var(--ease-arch);
+  appearance: none;
+}
+.field select {
+  background-image: linear-gradient(45deg, transparent 50%, currentColor 50%),
+    linear-gradient(135deg, currentColor 50%, transparent 50%);
+  background-position: calc(100% - 10px) 55%, calc(100% - 5px) 55%;
+  background-size: 5px 5px;
+  background-repeat: no-repeat;
+}
+.field select option {
+  color: var(--color-ink);
+}
+.field input:focus,
+.field select:focus,
+.field textarea:focus {
+  outline: none;
+  border-bottom-color: var(--color-ember-light);
+}
+.field [aria-invalid="true"] {
+  border-bottom-color: #ef8f6a;
+}
+.field input::placeholder,
+.field textarea::placeholder {
+  color: rgba(244, 240, 232, 0.5);
+}
+
+/* ── Reduced motion ────────────────────────────────────────────────────── */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+@keyframes scrollcue {
+  0% {
+    transform: translateY(-100%);
+  }
+  60%,
+  100% {
+    transform: translateY(200%);
+  }
 }
