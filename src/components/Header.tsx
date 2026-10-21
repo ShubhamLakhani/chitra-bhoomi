@@ -5,27 +5,21 @@ import { ArrowUpRight } from "lucide-react";
 import { site } from "@/content/site";
 import { gsap, prefersReducedMotion } from "@/lib/gsap";
 import { useMotion } from "@/components/MotionProvider";
-import { Wordmark } from "@/components/Wordmark";
+import { Logo } from "@/components/Logo";
 
 export function Header() {
   const { lenis } = useMotion();
   const [scrolled, setScrolled] = useState(false);
   const [hidden, setHidden] = useState(false);
-  const [dark, setDark] = useState(false);
   const [open, setOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
   const toggleRef = useRef<HTMLButtonElement>(null);
 
-  // Hide on scroll down, reveal on scroll up; flip colours over dark sections
-  // (any element marked data-theme="dark" sitting under the header line).
+  // Hide on scroll down, reveal on scroll up. The bar stays light everywhere so
+  // the official wordmark always sits on the background it was drawn for.
   useEffect(() => {
     let last = window.scrollY;
     let frame = 0;
-    const checkTheme = () => {
-      const stack = document.elementsFromPoint(window.innerWidth / 2, 38);
-      const under = stack.find((el) => !el.closest("header") && !el.closest("#mobile-menu"));
-      setDark(under?.closest("[data-theme]")?.getAttribute("data-theme") === "dark");
-    };
     const onScroll = () => {
       cancelAnimationFrame(frame);
       frame = requestAnimationFrame(() => {
@@ -35,16 +29,13 @@ export function Header() {
           setHidden(y > last && y > 240);
           last = y;
         }
-        checkTheme();
       });
     };
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
-    window.addEventListener("cb:theme", checkTheme);
     return () => {
       cancelAnimationFrame(frame);
       window.removeEventListener("scroll", onScroll);
-      window.removeEventListener("cb:theme", checkTheme);
     };
   }, []);
 
@@ -90,7 +81,6 @@ export function Header() {
     return () => mq.removeEventListener("change", onChange);
   }, []);
 
-  const onDark = dark && !open;
   const solid = scrolled && !open;
 
   return (
@@ -105,16 +95,12 @@ export function Header() {
         className={`fixed inset-x-0 top-0 z-[60] transition-[transform,background-color,color,border-color] duration-700 ease-[var(--ease-arch)] ${
           hidden && !open ? "-translate-y-full" : "translate-y-0"
         } ${
-          open
-            ? "border-b border-transparent bg-transparent text-paper"
-            : onDark
-              ? `text-paper ${solid ? "border-b border-paper/10 bg-charcoal" : "border-b border-transparent"}`
-              : `text-ink ${solid ? "border-b border-ink/10 bg-ivory" : "border-b border-transparent"}`
+          `text-ink ${solid ? "border-b border-ink/10 bg-ivory" : "border-b border-transparent"}`
         }`}
       >
         <div className="shell flex h-[var(--header-h)] items-center justify-between">
-          <a href="#top" aria-label={`${site.name} — back to top`} className="relative z-[61]">
-            <Wordmark />
+          <a href="#top" aria-label={`${site.name} — back to top`} className="relative z-[61] block">
+            <Logo priority className="h-9 lg:h-10" />
           </a>
 
           <nav aria-label="Primary" className="hidden lg:block">
@@ -165,7 +151,7 @@ export function Header() {
         aria-modal="true"
         aria-label="Site menu"
         hidden={!open}
-        className="on-dark fixed inset-0 z-[55] flex flex-col bg-charcoal text-paper lg:hidden"
+        className="fixed inset-0 z-[55] flex flex-col bg-ivory text-ink lg:hidden"
       >
         <div className="shell flex flex-1 flex-col justify-between pb-10 pt-[calc(var(--header-h)+5vh)]">
           <nav aria-label="Mobile">
@@ -178,16 +164,17 @@ export function Header() {
                     onClick={() => setOpen(false)}
                     className="flex items-baseline gap-4 py-1"
                   >
-                    <span className="font-mono text-[11px] text-mist">{String(i + 1).padStart(2, "0")}</span>
+                    <span className="font-mono text-[11px] text-graphite">{String(i + 1).padStart(2, "0")}</span>
                     <span className="display text-[clamp(2.6rem,11vw,4.5rem)]">{item.label}</span>
                   </a>
                 </li>
               ))}
             </ul>
           </nav>
-          <div className="grid gap-6 border-t border-paper/15 pt-6 text-sm sm:grid-cols-2">
+          <div className="grid gap-6 border-t border-ink/15 pt-6 text-sm sm:grid-cols-2">
+            <p className="eyebrow text-graphite sm:col-span-2">{site.serviceLine}</p>
             <div>
-              <p className="eyebrow mb-2 text-mist">Call</p>
+              <p className="eyebrow mb-2 text-graphite">Call</p>
               <a href={site.contact.phoneHref} className="text-lg">
                 {site.contact.phoneDisplay}
               </a>

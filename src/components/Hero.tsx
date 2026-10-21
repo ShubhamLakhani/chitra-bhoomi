@@ -6,6 +6,9 @@ import { HeroHeadline } from "@/components/HeroHeadline";
 
 export function Hero() {
   const image = resolveImage(hero.image);
+  // A bright image keeps the headline in ink; a dark one switches it to paper where it overlaps.
+  const lightImage = image.available && image.tone === "light";
+  const chip = lightImage ? "bg-paper/85 px-2 py-1 text-ink/80" : "";
 
   return (
     <section
@@ -27,16 +30,18 @@ export function Hero() {
           className="relative h-full w-full"
           tag={false}
         />
-        {/* legibility scrim where the headline crosses the image */}
-        <div
-          aria-hidden
-          className="pointer-events-none absolute inset-0 hidden bg-[linear-gradient(90deg,rgba(18,17,16,0.38),rgba(18,17,16,0)_45%)] lg:block"
-        />
+        {/* legibility scrim where the headline crosses a dark image */}
+        {!lightImage && (
+          <div
+            aria-hidden
+            className="pointer-events-none absolute inset-0 hidden bg-[linear-gradient(90deg,rgba(18,17,16,0.38),rgba(18,17,16,0)_45%)] lg:block"
+          />
+        )}
         {/* top dimension line */}
-        <div aria-hidden className="absolute inset-x-5 top-5 flex items-center gap-3 text-paper/70">
+        <div aria-hidden className={`absolute inset-x-5 top-5 flex items-center gap-3 ${lightImage ? "text-ink/55" : "text-paper/70"}`}>
           <span className="h-3 w-px bg-current" />
           <span data-reveal="hero" data-hero="rule" className="h-px flex-1 bg-current opacity-60" />
-          <span data-reveal="hero" data-hero="detail" className="font-mono text-[10px] uppercase tracking-[0.18em]">
+          <span data-reveal="hero" data-hero="detail" className={`font-mono text-[10px] uppercase tracking-[0.18em] ${chip}`}>
             {hero.caption.note}
           </span>
           <span data-reveal="hero" data-hero="rule" className="h-px w-10 bg-current opacity-60" />
@@ -45,9 +50,17 @@ export function Hero() {
         <div
           data-reveal="hero"
           data-hero="detail"
-          className="absolute bottom-5 right-5 text-right font-mono text-[10px] uppercase leading-relaxed tracking-[0.16em] text-paper/85"
+          className={`absolute bottom-5 right-5 text-right font-mono text-[10px] uppercase leading-relaxed tracking-[0.16em] ${
+            lightImage ? chip : "text-paper/85"
+          }`}
         >
           {hero.caption.label}
+          {image.available && image.kind === "visualisation" && (
+            <>
+              <br />
+              <span className="opacity-75">Architectural visualisation</span>
+            </>
+          )}
           {!image.available && (
             <>
               <br />
@@ -62,7 +75,7 @@ export function Hero() {
         <div className="mt-8 flex flex-col gap-2 lg:mt-0 lg:w-[42%]">
           <p data-reveal="hero" data-hero="detail" className="eyebrow flex items-center gap-3 text-graphite">
             <span className="brand-square !h-[7px] !w-[7px]" aria-hidden />
-            {site.disciplines.join(" · ")}
+            {site.serviceLine}
           </p>
           <p data-reveal="hero" data-hero="detail" className="eyebrow text-graphite">
             Studio — {site.city}
@@ -70,7 +83,7 @@ export function Hero() {
         </div>
 
         <div className="relative z-10 mt-10 lg:mt-0">
-          <HeroHeadline lines={hero.headline} imageId="hero-image" />
+          <HeroHeadline lines={hero.headline} imageId="hero-image" colourShift={!lightImage} />
         </div>
 
         <div className="mt-8 lg:mt-0 lg:w-[40%]">
@@ -97,7 +110,7 @@ export function Hero() {
         href="#work"
         data-reveal="hero"
         data-hero="detail"
-        className="group absolute bottom-[clamp(24px,4vh,44px)] left-[calc(var(--gutter)+42%)] hidden -translate-x-full items-center gap-3 xl:flex"
+        className="group absolute bottom-[clamp(24px,4vh,44px)] left-[calc(47%-var(--gutter)-28px)] hidden -translate-x-full items-center gap-3 xl:flex"
         aria-label="Scroll to selected work"
       >
         <span className="eyebrow text-graphite">Scroll</span>

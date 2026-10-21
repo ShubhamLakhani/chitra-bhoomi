@@ -8,12 +8,12 @@ type Props = {
   priority?: boolean;
   /** Must include a position utility (defaults to "relative") */
   className?: string;
-  /** Show the small "drawing placeholder" tag on plates */
+  /** Show the "concept study" sheet on drawings, or the "visualisation" label on renders */
   tag?: boolean;
   tagTone?: "light" | "dark";
 };
 
-/** A photograph when available, otherwise the matching drawing plate. */
+/** The supplied image when available, otherwise the matching drawing plate. */
 export function Figure({ image, sizes, priority, className = "relative", tag = true, tagTone }: Props) {
   const tone = tagTone ?? (image.plate === "facade-night" ? "dark" : "light");
   return (
@@ -33,6 +33,11 @@ export function Figure({ image, sizes, priority, className = "relative", tag = t
           <ArchPlate kind={image.plate} title={`Concept drawing, not a project photograph: ${image.alt}`} />
         )}
       </div>
+      {image.available && image.kind === "visualisation" && tag && (
+        <span className="pointer-events-none absolute bottom-3 left-3 bg-paper/90 px-2 py-1 font-mono text-[10px] uppercase tracking-[0.14em] text-graphite">
+          Visualisation
+        </span>
+      )}
       {!image.available && tag && (
         // Drawing-sheet treatment: inset frame + title block, so the plate
         // reads as a conceptual study rather than documentation of a project.

@@ -9,6 +9,12 @@ export function Work() {
     cover: resolveImage(p.cover),
     gallery: p.gallery.map(resolveImage),
   }));
+  const images = resolved.flatMap((p) => [p.cover, ...p.gallery]);
+  const note = resolved.some((p) => !p.cover.available)
+    ? "Shown as concept drawings until project imagery is added."
+    : images.some((i) => i.kind === "visualisation")
+      ? "Project imagery shown as architectural visualisations."
+      : null;
 
   return (
     <section id="work" aria-labelledby="work-title" className="relative pb-[clamp(96px,14vw,200px)] pt-[clamp(96px,12vw,180px)]">
@@ -22,11 +28,7 @@ export function Work() {
             <p className="pretty max-w-[38ch] text-[1.0625rem] leading-relaxed text-graphite">
               A selection of homes and interiors, each shaped around the people who live in them.
             </p>
-            {resolved.some((p) => !p.cover.available) && (
-              <p className="eyebrow mt-5 max-w-[44ch] leading-relaxed text-graphite">
-                Shown as concept drawings until project photography is added.
-              </p>
-            )}
+            {note && <p className="eyebrow mt-5 max-w-[44ch] leading-relaxed text-graphite">{note}</p>}
           </div>
         </div>
         <WorkGallery projects={resolved} />

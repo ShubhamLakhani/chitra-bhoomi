@@ -7,7 +7,7 @@
  * work (white planes, dark vertical louvers, glass balconies, timber
  * soffits, a stone fin). It is an interpretation, not a survey of any
  * specific building. Scroll progress (0–1) drives the camera path, the
- * layer "explode", the interior reveal, landscape growth and dusk.
+ * layer "explode", the interior reveal, planting growth and dusk.
  *
  * Units are metres. The front of the plot faces +Z, ground is y = 0.
  */
@@ -278,7 +278,7 @@ const KEYS: { t: number; pos: V3; tgt: V3 }[] = [
   { t: 0.34, pos: [15, 9.5, 19], tgt: [0.8, 7.2, -1] }, // louvers & balconies
   { t: 0.5, pos: [30, 23, 25], tgt: [0, 6, -3.5] }, // exploded axonometric
   { t: 0.67, pos: [3.5, 7.2, 23], tgt: [0, 5.6, -6] }, // into the interior
-  { t: 0.83, pos: [-26, 13, 29], tgt: [0, 4.6, -4] }, // landscape
+  { t: 0.83, pos: [-26, 13, 29], tgt: [0, 4.6, -4] }, // wide view, planting grown in
   { t: 1.0, pos: [20, 7, 37], tgt: [0, 5.8, -4] }, // the complete composition
 ];
 
@@ -415,7 +415,7 @@ function Scene({ progress, quality }: { progress: RefObject<number>; quality: "h
     if (interior.current) interior.current.visible = inside > 0.01;
     intMats.forEach((mat) => setOpacity(mat, inside));
 
-    // 05 Landscape — trees grow in a gentle stagger
+    // 05 Material & Light — planting grows in a gentle stagger as the light turns
     const grow = smooth(0.66, 0.84, t);
     trees.current.forEach((g, i) => {
       if (!g) return;
@@ -509,7 +509,7 @@ function Scene({ progress, quality }: { progress: RefObject<number>; quality: "h
         <Facade m={m} />
       </group>
       <Lamps m={m} />
-      <Landscape m={m} register={registerTree} />
+      <Planting m={m} register={registerTree} />
 
       <group ref={warm} visible={false}>
         <pointLight position={[-0.8, 2.6, 0.6]} distance={9} decay={2} userData={{ peak: 9 }} color="#ffc287" />
@@ -785,7 +785,7 @@ const FACADE_SHRUBS: V3[] = (() => {
   return out;
 })();
 
-function Landscape({ m, register }: { m: Mats; register: (i: number) => (g: THREE.Group | null) => void }) {
+function Planting({ m, register }: { m: Mats; register: (i: number) => (g: THREE.Group | null) => void }) {
   return (
     <group>
       <Tree at={[-6.6, 0, 1.6]} size={1.15} m={m} register={register(0)} />

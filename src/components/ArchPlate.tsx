@@ -5,7 +5,7 @@
  * yet. They are original study drawings (not reproductions of a specific
  * project) and are rendered as inline SVG so they stay sharp and light.
  * All plates use a square 1000×1000 viewBox with "slice" so they crop
- * gracefully into portrait, square and landscape frames.
+ * gracefully into portrait, square and wide frames.
  */
 
 import type { ReactNode } from "react";
@@ -16,7 +16,6 @@ export type PlateKind =
   | "facade-alt"
   | "interior-living"
   | "interior-bedroom"
-  | "landscape"
   | "section";
 
 type Palette = {
@@ -103,9 +102,6 @@ export function ArchPlate({
     case "interior-bedroom":
       body = <Interior p={p} room="bedroom" />;
       break;
-    case "landscape":
-      body = <SitePlan p={p} />;
-      break;
     case "section":
       body = <Section p={p} />;
       break;
@@ -133,7 +129,6 @@ export function plateLabel(kind: PlateKind) {
     "facade-alt": "Study elevation B",
     "interior-living": "Interior study, living",
     "interior-bedroom": "Interior study, bedroom",
-    landscape: "Landscape study, plan",
     section: "Study section",
   }[kind];
 }
@@ -365,7 +360,7 @@ function Facade({
         ))}
       </g>
 
-      {/* landscape */}
+      {/* planting */}
       <Tree x={X(-6.4)} base={GY} h={150} p={p} />
       <Tree x={X(-7.6)} base={GY} h={100} p={p} />
       <Palm x={X(6.6)} base={GY} h={250} p={p} flip={mirror} />
@@ -582,90 +577,6 @@ function BedroomBits({ p, bx1, bx2, by2 }: WallBox) {
           <circle cx={x} cy={262 + i * 30} r={11} fill="#F6D7AE" />
         </g>
       ))}
-    </g>
-  );
-}
-
-/* ── Landscape site plan ──────────────────────────────────────────────────── */
-
-function SitePlan({ p }: { p: Palette }) {
-  const trees = [
-    [240, 260, 70],
-    [330, 200, 46],
-    [760, 280, 58],
-    [810, 690, 74],
-    [210, 720, 52],
-    [690, 820, 40],
-  ];
-  return (
-    <g stroke={p.line} strokeWidth="1.3" fill="none">
-      {/* plot boundary */}
-      <rect x="130" y="130" width="740" height="740" strokeDasharray="10 6" />
-      {/* lawn texture */}
-      <rect x="160" y="160" width="680" height="680" fill="#E6E2D2" stroke="none" />
-      <g fill={p.faint} stroke="none">
-        {range(180, 820, 22).flatMap((x) =>
-          range(180, 820, 22).map((y) => <circle key={`${x}-${y}`} cx={x + ((y / 22) % 2) * 11} cy={y} r="1.1" />),
-        )}
-      </g>
-      {/* building footprint */}
-      <rect x="380" y="300" width="300" height="380" fill="url(#cb-hatch)" />
-      <rect x="380" y="300" width="300" height="380" strokeWidth="2.4" />
-      {/* terrace deck */}
-      <rect x="300" y="430" width="80" height="250" fill="#D7C2A8" />
-      <g stroke="rgba(29,27,25,0.25)">
-        {range(440, 680, 12).map((y) => (
-          <line key={y} x1="300" y1={y} x2="380" y2={y} />
-        ))}
-      </g>
-      {/* stepping stones + path */}
-      {range(0, 6, 1).map((i) => (
-        <rect key={i} x={520 - 14 + (i % 2) * 18} y={700 + i * 26} width="40" height="16" fill="#F6F2EA" />
-      ))}
-      {/* trees */}
-      {trees.map(([x, y, r]) => (
-        <g key={`${x}${y}`}>
-          <circle cx={x} cy={y} r={r} fill="#C9CDB3" fillOpacity="0.75" />
-          {range(0, 330, 30).map((a) => {
-            const rad = (a * Math.PI) / 180;
-            return (
-              <line
-                key={a}
-                x1={x + Math.cos(rad) * r * 0.2}
-                y1={y + Math.sin(rad) * r * 0.2}
-                x2={x + Math.cos(rad) * r * 0.85}
-                y2={y + Math.sin(rad) * r * 0.85}
-                stroke={p.faint}
-              />
-            );
-          })}
-          <circle cx={x} cy={y} r="2.5" fill={p.line} />
-        </g>
-      ))}
-      {/* water / pool */}
-      <rect x="170" y="430" width="110" height="200" fill="#C9D6D5" />
-      <g stroke="rgba(255,255,255,0.8)">
-        {range(450, 610, 24).map((y) => (
-          <path key={y} d={`M185,${y} q12,-6 24,0 t24,0 t24,0 t24,0`} />
-        ))}
-      </g>
-      {/* north arrow */}
-      <g transform="translate(820,180)">
-        <circle r="22" />
-        <path d="M0,-18 L7,10 L0,4 L-7,10 Z" fill={p.accent} stroke="none" />
-        <text y="-30" textAnchor="middle" fontFamily="var(--font-mono), monospace" fontSize="11" fill={p.label} stroke="none">
-          N
-        </text>
-      </g>
-      {/* scale bar */}
-      <g transform="translate(560,900)" fontFamily="var(--font-mono), monospace" fontSize="10" fill={p.label}>
-        <rect width="40" height="6" fill={p.line} stroke="none" />
-        <rect x="40" width="40" height="6" stroke={p.line} />
-        <rect x="80" width="80" height="6" fill={p.line} stroke="none" />
-        <text x="0" y="22" stroke="none">0</text>
-        <text x="76" y="22" stroke="none">2</text>
-        <text x="152" y="22" stroke="none">5 m</text>
-      </g>
     </g>
   );
 }

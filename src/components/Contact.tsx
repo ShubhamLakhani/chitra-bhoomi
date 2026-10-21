@@ -8,7 +8,6 @@ export function Contact() {
   return (
     <section
       id="contact"
-      data-theme="dark"
       aria-labelledby="contact-title"
       className="on-dark relative bg-charcoal pb-[clamp(96px,12vw,180px)] pt-[clamp(96px,12vw,180px)] text-paper"
     >
@@ -67,7 +66,7 @@ export function Contact() {
 
           <div data-reveal="fade" className="col-span-12 md:col-span-7 md:col-start-6 lg:col-span-7 lg:col-start-6">
             <p className="pretty mb-10 max-w-[44ch] text-[1.0625rem] leading-relaxed text-paper/75">
-              Tell us a little about your site and what you have in mind — a new home, an interior, or a garden.
+              Tell us a little about your site and what you have in mind — a new home, a building, or an interior.
             </p>
             <EnquiryForm />
           </div>

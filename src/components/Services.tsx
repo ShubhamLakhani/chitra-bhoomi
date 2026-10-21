@@ -37,7 +37,6 @@ export function Services() {
   return (
     <section
       id="services"
-      data-theme="dark"
       aria-labelledby="services-title"
       className="on-dark relative bg-charcoal pb-[clamp(96px,14vw,200px)] pt-[clamp(80px,10vw,150px)] text-paper"
     >

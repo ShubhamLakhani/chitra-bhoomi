@@ -90,11 +90,6 @@ export function HouseSection() {
     return () => st.kill();
   }, [mode]);
 
-  // Let the header re-check its colour when the stage turns to dusk.
-  useEffect(() => {
-    window.dispatchEvent(new Event("cb:theme"));
-  }, [dark]);
-
   const intro = (
     <div className="shell pb-[clamp(56px,8vw,110px)] pt-[clamp(96px,12vw,180px)]">
       <SectionLabel index="03" label="Architecture in Motion" />
@@ -144,7 +139,6 @@ export function HouseSection() {
       {intro}
       <div ref={trackRef} className="relative h-[560vh]">
         <div
-          data-theme={dark ? "dark" : undefined}
           className={`sticky top-0 h-[100svh] overflow-hidden transition-colors duration-700 ${
             dark ? "bg-charcoal text-paper" : "bg-ivory text-ink"
           }`}

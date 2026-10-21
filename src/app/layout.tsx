@@ -25,7 +25,7 @@ const plexMono = IBM_Plex_Mono({
 });
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL;
-const title = `${site.name} — Architecture, Interiors & Landscape in Surat`;
+const title = `${site.name} — Architecture, Interior Design & Structure in Surat`;
 
 export const metadata: Metadata = {
   metadataBase: siteUrl ? new URL(siteUrl) : undefined,
@@ -34,7 +34,6 @@ export const metadata: Metadata = {
   keywords: [
     "architect in Surat",
     "interior designer Surat",
-    "landscape design Surat",
     "residential architecture Gujarat",
     "Chitra Bhoomi Architects",
   ],
@@ -70,6 +69,7 @@ const jsonLd = {
     addressCountry: site.contact.address.country,
   },
   sameAs: [site.contact.instagram, site.contact.facebook],
+  slogan: site.serviceLine,
   ...(siteUrl ? { url: siteUrl } : {}),
 };
 

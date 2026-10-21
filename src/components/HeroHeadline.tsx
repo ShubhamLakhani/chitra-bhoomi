@@ -5,9 +5,18 @@ import { useEffect, useRef } from "react";
 /**
  * The hero headline is rendered twice: an ink copy over the paper, and an
  * ivory copy clipped to the hero image so the type changes colour exactly
- * where it crosses the photograph.
+ * where it crosses the image. Bright images skip the ivory copy.
  */
-export function HeroHeadline({ lines, imageId }: { lines: string[]; imageId: string }) {
+export function HeroHeadline({
+  lines,
+  imageId,
+  colourShift = true,
+}: {
+  lines: string[];
+  imageId: string;
+  /** Switch the type to paper where it crosses the image (off for bright images) */
+  colourShift?: boolean;
+}) {
   const wrapRef = useRef<HTMLDivElement>(null);
   const overlayRef = useRef<HTMLDivElement>(null);
 
@@ -35,7 +44,7 @@ export function HeroHeadline({ lines, imageId }: { lines: string[]; imageId: str
       ro.disconnect();
       window.removeEventListener("resize", update);
     };
-  }, [imageId]);
+  }, [imageId, colourShift]);
 
   const render = (decorative: boolean) =>
     lines.map((line, i) => (
@@ -58,14 +67,16 @@ export function HeroHeadline({ lines, imageId }: { lines: string[]; imageId: str
       <h1 className="display text-[clamp(3.3rem,12.5vw,5.6rem)] text-ink sm:text-[clamp(4.4rem,10vw,7rem)] lg:text-[clamp(5rem,8.2vw,10.5rem)]">
         {render(false)}
       </h1>
-      <div
-        ref={overlayRef}
-        aria-hidden
-        className="display pointer-events-none absolute inset-0 hidden text-[clamp(5rem,8.2vw,10.5rem)] text-paper lg:block"
-        style={{ clipPath: "inset(0 0 0 100%)" }}
-      >
-        {render(true)}
-      </div>
+      {colourShift && (
+        <div
+          ref={overlayRef}
+          aria-hidden
+          className="display pointer-events-none absolute inset-0 hidden text-[clamp(5rem,8.2vw,10.5rem)] text-paper lg:block"
+          style={{ clipPath: "inset(0 0 0 100%)" }}
+        >
+          {render(true)}
+        </div>
+      )}
     </div>
   );
 }
